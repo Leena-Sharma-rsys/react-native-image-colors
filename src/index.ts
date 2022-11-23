@@ -1,4 +1,4 @@
-import { Image } from 'react-native'
+import { Image, Platform } from 'react-native'
 import { RNImageColors } from './module'
 import { cache } from './cache'
 import type { ImageRequireSource } from 'react-native'
@@ -6,7 +6,9 @@ import type { ImageColorsResult, RNImageColorsModule } from './types'
 
 const MAX_KEY_LEN = 500
 
-const resolveImageSource = (source: string | ImageRequireSource): string => {
+const resolveImageSource = (
+  source: string | ImageRequireSource | { uri: string }
+): string => {
   if (typeof source === 'string') {
     return source
   } else {
@@ -15,7 +17,12 @@ const resolveImageSource = (source: string | ImageRequireSource): string => {
 }
 
 const getColors: RNImageColorsModule['getColors'] = async (source, config) => {
-  const resolvedSrc = resolveImageSource(source)
+  let resolvedSrc = null
+  if (Platform.OS === 'web' && typeof source !== 'string') {
+    resolvedSrc = source?.uri
+  } else {
+    resolvedSrc = resolveImageSource(source)
+  }
 
   if (config?.cache) {
     const cachedResult = config.key

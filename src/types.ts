@@ -46,7 +46,7 @@ export type ImageColorsResult =
   | WebImageColors
 
 declare function GetColors<C extends Config>(
-  url: string,
+  url: string | { uri: string },
   config?: C
 ): Promise<ImageColorsResult>
 
